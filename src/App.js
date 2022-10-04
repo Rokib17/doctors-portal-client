@@ -15,6 +15,11 @@ import MyReview from './Pages/Dashboard/MyReview';
 import MyHistory from './Pages/Dashboard/MyHistory';
 import Users from './Pages/Dashboard/Users';
 import RequireAdmin from './Pages/Login/RequireAdmin';
+import AddDoctor from './Pages/Dashboard/AddDoctor';
+import ManageDoctors from './Pages/Dashboard/ManageDoctors';
+import ContactUs from './Pages/ContactUs/ContactUs';
+import Payment from './Pages/payment/Payment'
+import Review from './Pages/Review/Review';
 
 function App() {
   return (
@@ -23,6 +28,9 @@ function App() {
    <Routes>
         <Route path="/" element={<Home />} />
         <Route path="about" element={<About />} />
+        <Route path="review" element={<Review />} />
+        <Route path="contactus" element={<ContactUs />} />
+        <Route path='/payment' element={<Payment/>} />
         <Route path="appointment" element={
         <RequireAuth>
             <Appointment />
@@ -37,6 +45,8 @@ function App() {
           <Route path="review" element= { <MyReview></MyReview>}></Route>
           <Route path="history" element= { <MyHistory></MyHistory>}></Route>
           <Route path="users" element={<RequireAdmin><Users></Users></RequireAdmin>}></Route>
+          <Route path="addDoctor" element={<RequireAdmin><AddDoctor></AddDoctor></RequireAdmin>}></Route>
+          <Route path="manageDoctor" element={<RequireAdmin><ManageDoctors></ManageDoctors></RequireAdmin>}></Route>
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<SignUp />} />

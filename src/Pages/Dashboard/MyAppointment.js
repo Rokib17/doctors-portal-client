@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../../firebase.init';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
+import useAdmin from '../../hooks/useAdmin'
 
 const MyAppointments = () => {
 
     const [appointments, setAppointments] = useState([]);
     const [user] = useAuthState(auth);
+    const [admin] = useAdmin(user)
     const navigate = useNavigate()
+
+    const paymentPage = (id) => {
+        navigate('/payment', { state: { appointmentId: id } })
+    }
 
     useEffect(() => {
         if (user) {
@@ -36,7 +42,7 @@ const MyAppointments = () => {
 
     return (
         <div>
-            <h2>My Appointments: {appointments.length}</h2>
+            <h2>All Appointments: {appointments.length}</h2>
             <div class="overflow-x-auto">
                 <table class="table w-full">
                     <thead>
@@ -46,6 +52,8 @@ const MyAppointments = () => {
                             <th>Date</th>
                             <th>Time</th>
                             <th>Treatment</th>
+                            <th>Pament status</th>
+                            <th>Token Number</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,6 +64,10 @@ const MyAppointments = () => {
                                 <td>{a.date}</td>
                                 <td>{a.slot}</td>
                                 <td>{a.treatment}</td>
+                                {
+                                    admin ? a.payment === 'paid' ? <td><div class="badge badge-success">paid</div></td> :  <td><div class="badge badge-warning ">unpaid</div></td>  : a.payment === 'paid' ?  <td><div class="badge badge-success">paid</div></td>  : <td onClick={() => paymentPage(a._id)}><div class="badge badge-warning ">pay</div></td>
+                                }
+                               
                             </tr>)
                         }
 
