@@ -15,7 +15,7 @@ const ReviewArea = () => {
     };
     return (
         <section className='font-serif'>
-            <h1 className='text-center my-5 text-purple-500 text-2xl'>Clients Feedback</h1>
+            <h1 className='text-center my-5 text-purple-500 text-2xl'>Patients Feedback</h1>
             <div className='my-5'>
 
                 <div className="container flex justify-between ">

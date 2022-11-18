@@ -4,20 +4,34 @@ import auth from '../../firebase.init';
 import { useNavigate, Link } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import useAdmin from '../../hooks/useAdmin'
+import { toast } from 'react-toastify';
 
 const MyAppointments = () => {
-
+    const [res, setRes] = useState('')
     const [appointments, setAppointments] = useState([]);
     const [user] = useAuthState(auth);
     const [admin] = useAdmin(user)
     const navigate = useNavigate()
 
-    const paymentPage = (id) => {
-        navigate('/payment', { state: { appointmentId: id } })
+    const paymentPage = (details) => {
+        navigate('/payment', { state: { appointmentDetails: details } })
     }
-
+    const cancelBoking = (id) => {
+        try {
+            fetch(`http://localhost:5000/delete-booking/${id}`, {
+                method: 'GET',
+                headers: {
+                    'authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+            toast.success('booking delete success')
+            setRes('success')
+        } catch (error) {
+            toast.error('booking delete fail')
+        }
+    }
     useEffect(() => {
-        if (user) {
+        if (user || res) {
             fetch(`http://localhost:5000/booking?patient=${user.email}`, {
                 method: 'GET',
                 headers: {
@@ -38,7 +52,8 @@ const MyAppointments = () => {
                     setAppointments(data);
                 });
         }
-    }, [user])
+        setRes('')
+    }, [user, res])
 
     return (
         <div>
@@ -53,7 +68,7 @@ const MyAppointments = () => {
                             <th>Time</th>
                             <th>Treatment</th>
                             <th>Pament status</th>
-                            <th>Token Number</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,9 +80,12 @@ const MyAppointments = () => {
                                 <td>{a.slot}</td>
                                 <td>{a.treatment}</td>
                                 {
-                                    admin ? a.payment === 'paid' ? <td><div class="badge badge-success">paid</div></td> :  <td><div class="badge badge-warning ">unpaid</div></td>  : a.payment === 'paid' ?  <td><div class="badge badge-success">paid</div></td>  : <td onClick={() => paymentPage(a._id)}><div class="badge badge-warning ">pay</div></td>
+                                    admin ? a.payment === 'paid' ? <td><div class="badge badge-success">paid</div></td> : <td><div class="badge badge-warning ">unpaid</div></td> : a.payment === 'paid' ? <td><div class="badge badge-success">paid</div></td> : <td onClick={() => paymentPage(a)}><div class="badge badge-warning ">pay</div></td>
                                 }
-                               
+                                {
+                                    a.payment === 'paid' ? <td>Success</td> : <td onClick={() => cancelBoking(a._id)}>Cancel</td>
+                                }
+
                             </tr>)
                         }
 
